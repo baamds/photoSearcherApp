@@ -9,6 +9,8 @@ import UIKit
 
 class ViewController: UIViewController, UICollectionViewDataSource {
     
+    // "https://api.unsplash.com/search/photos?page=1&per_page=10&query=people&client_id=mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
+    
     var page = 1
     let keyword = "people"
     let apiKey = "tYfYoUXHNfDpZQFA-DIifgLw_WLIDgimfCrpI8FUP5E"
