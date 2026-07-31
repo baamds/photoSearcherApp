@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UICollectionViewDataSource {
+class MainViewController: UIViewController, UICollectionViewDataSource {
     
     // "https://api.unsplash.com/search/photos?page=1&per_page=10&query=people&client_id=mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
     
@@ -18,13 +18,42 @@ class ViewController: UIViewController, UICollectionViewDataSource {
    
     private var collectionView: UICollectionView?
     
+    var query = "people"
     
     var results: [JasonResult] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        configureView()
+        fetchPhotos(from: query)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView?.frame = view.bounds
         
+    }
+    
+ // MARK: - Networking ======================================================
+    
+    func fetchPhotos(from keyword: String) {
+        NetworkService.shared.sendRequest(keyword: keyword) { [weak self] result in
+            switch result {
+            case .success(let results):
+                guard let results = results else { return }
+                DispatchQueue.main.async {
+                    self?.results = results
+                    self?.collectionView?.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+}
+// MARK: UIConfiguration ==========================================================
+extension MainViewController {
+    func configureView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 0
@@ -38,43 +67,11 @@ class ViewController: UIViewController, UICollectionViewDataSource {
         view.addSubview(collectionView)
         self.collectionView = collectionView
         collectionView.backgroundColor = .systemBackground
-        fetchPhotos()
     }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        collectionView?.frame = view.bounds
-        
-    }
-    
-    
-    
-    func fetchPhotos() {
-        let url = "https://api.unsplash.com/search/photos?page=\(page)&per_page=\(perPage)&query=\(keyword)&client_id=\(apiKey)"
-        
-        guard let urlString = URL(string: url) else { return }
-        
-        
-        let task = URLSession.shared.dataTask(with: urlString) { (data, response, error) in
-            guard let data = data, error == nil else { return }
-            
-            DispatchQueue.main.async { [weak self] in
-                do {
-                    let decoder = JSONDecoder()
-                    let jasonResult = try decoder.decode(APIResponse.self, from: data)
-                    self?.results = jasonResult.results
-                    self?.collectionView?.reloadData()
-                } catch {
-                    print(error)
-                }
-            }
-           
-        }
-        task.resume()
-    }
+}
 
-    
-    
+// MARK: UICollectionView Methods ====================================================
+extension MainViewController {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return results.count
     }
@@ -91,9 +88,4 @@ class ViewController: UIViewController, UICollectionViewDataSource {
         cell.setup(with: imageURLString)
         return cell
     }
-    
-    
-
 }
-
-
