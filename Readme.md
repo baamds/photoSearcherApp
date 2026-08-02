@@ -4,7 +4,7 @@ A simple iOS image-search app built with Swift. Search for a topic and browse a 
 
 ## Preview
 
-<img src="assets/app-screenshot.png" alt="PhotoSearcherApp showing a search bar and photo results" width="320" />
+<img src="app-screenshot.png" alt="PhotoSearcherApp showing a search bar and photo results" width="320" />
 
 ## Features
 

@@ -8,11 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		51F7ABAB301FF5E90077922F /* Readme.md in Resources */ = {isa = PBXBuildFile; fileRef = 51F7ABAA301FF5DB0077922F /* Readme.md */; };
+		51F7ABAF301FF7680077922F /* app-screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 51F7ABAE301FF7680077922F /* app-screenshot.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		516413C6301D140700EECE17 /* photoSearchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = photoSearchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		51F7ABAA301FF5DB0077922F /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Readme.md; sourceTree = "<group>"; };
+		51F7ABAE301FF7680077922F /* app-screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-screenshot.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -51,6 +53,7 @@
 			isa = PBXGroup;
 			children = (
 				51F7ABAA301FF5DB0077922F /* Readme.md */,
+				51F7ABAE301FF7680077922F /* app-screenshot.png */,
 				516413C8301D140700EECE17 /* photoSearchApp */,
 				516413C7301D140700EECE17 /* Products */,
 			);
@@ -129,6 +132,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				51F7ABAB301FF5E90077922F /* Readme.md in Resources */,
+				51F7ABAF301FF7680077922F /* app-screenshot.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
