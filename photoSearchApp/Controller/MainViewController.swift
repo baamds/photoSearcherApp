@@ -8,42 +8,67 @@
 
 import UIKit
 
-class MainViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class MainViewController: UIViewController {
     
     
     var results: [JasonResult] = []
     private var collectionView: UICollectionView?
+    private let searchBar = UISearchBar()
+    
     var query = "people"
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchBar.delegate = self
         configureView()
         fetchPhotos(from: query)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        collectionView?.frame = view.bounds
-        
+        collectionView?.frame = CGRect(x: 0,
+                                       y: view.safeAreaInsets.top + 55,
+                                       width: view.frame.size.width,
+                                       height: view.frame.size.height - 55)
+        searchBar.frame = CGRect(x: 10,
+                                 y: view.safeAreaInsets.top,
+                                 width: view.frame.size.width - 20,
+                                 height: 50)
     }
-    
- // MARK: - Networking ======================================================
-    
-    func fetchPhotos(from keyword: String) {
-        NetworkService.shared.sendRequest(keyword: keyword) { [weak self] result in
-            switch result {
-            case .success(let results):
-                guard let results = results else { return }
-                DispatchQueue.main.async {
-                    self?.results = results
-                    self?.collectionView?.reloadData()
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
+}
+
+// MARK: - Networking ======================================================
+extension MainViewController {
+       private func fetchPhotos(from keyword: String) {
+           NetworkService.shared.sendRequest(keyword: keyword) { [weak self] result in
+               switch result {
+               case .success(let results):
+                   guard let results = results else { return }
+                   DispatchQueue.main.async {
+                       self?.results = results
+                       self?.collectionView?.reloadData()
+                   }
+               case .failure(let error):
+                   print(error)
+               }
+           }
+       }
+       
+       private func fetchNextBatch(from keyword: String) {
+           NetworkService.shared.sendRequest(keyword: keyword, completion: { [weak self] result in
+               switch result {
+               case .success(let results):
+                   guard let results = results else { return }
+                   DispatchQueue.main.async {
+                       self?.results.append(contentsOf: results)
+                       self?.collectionView?.reloadData()
+                   }
+               case .failure(let error):
+                   print(error)
+               }
+           })
+       }
 }
 // MARK: UIConfiguration ==========================================================
 extension MainViewController {
@@ -63,12 +88,13 @@ extension MainViewController {
         collectionVeiw.delegate = self
         
         view.addSubview(collectionVeiw)
+        view.addSubview(searchBar)
         self.collectionView = collectionVeiw
     }
 }
 
 // MARK: UICollectionView Methods ====================================================
-extension MainViewController {
+extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UISearchBarDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return results.count
     }
@@ -78,11 +104,17 @@ extension MainViewController {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCell.identifier, for: indexPath) as? PhotoCell else {
             return UICollectionViewCell()
         }
-        
-        // Configure the cell here if needed, e.g., pass imageURLString to it
-        // cell.configure(with: imageURLString)
-        
         cell.configure(with: photo)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(results[indexPath.row].color)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == results.count - 12 {
+            fetchNextBatch(from: query)
+        }
     }
 }

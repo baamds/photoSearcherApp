@@ -32,5 +32,28 @@ class PhotoCell: UICollectionViewCell {
     override func prepareForReuse() {
         imgView.image = nil
     }
+    
+    func configure(with photo: JasonResult) {
+        let imageUrl = photo.urls.small
+        let profileImage = photo.user.profile_image.small
+        let name = photo.user.name
+        let likes = photo.likes
+        let location = photo.user.location
+        
+        ImageProvider.shared.fetchImage(url: imageUrl, completion: { [weak self] image in
+            DispatchQueue.main.async {
+                self?.imgView.image = image
+            }
+        })
+
+        ImageProvider.shared.fetchImage(url: profileImage, completion: { [weak self] image in
+            DispatchQueue.main.async {
+                self?.profileImage.image = image
+                self?.name.text = name
+                self?.likes.text = "\(likes)"
+                self?.location.text = location
+            }
+        })
+    }
 
 }
