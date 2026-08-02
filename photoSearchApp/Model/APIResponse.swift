@@ -17,6 +17,7 @@ struct APIResponse: Codable {
 
 struct JasonResult: Codable {
     let id: String
+    let description: String
     let likes: Int
     let user: User
     let urls: URLS
@@ -30,14 +31,4 @@ struct URLS: Codable {
 
 struct User: Codable {
     let id: String
-    let name: String
-    let username: String
-    var location: String?
-    let profile_image: ProfileImage
-}
-
-struct ProfileImage: Codable {
-    let small: String
-    let medium: String
-    let large: String
 }

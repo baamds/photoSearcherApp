@@ -4,18 +4,23 @@
 //
 //  Created by Amir Bakhshi on 2026-07-29.
 //
-// "https://api.unsplash.com/search/photos?page=1&per_page=10&query=people&client_id=mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
 
 import UIKit
 
 class MainViewController: UIViewController, UICollectionViewDataSource {
     
+    // "https://api.unsplash.com/search/photos?page=1&per_page=10&query=people&client_id=mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
+    
+    var page = 1
+    let keyword = "people"
+    let apiKey = "tYfYoUXHNfDpZQFA-DIifgLw_WLIDgimfCrpI8FUP5E"
+    let perPage = "30"
    
     private var collectionView: UICollectionView?
-    var results: [JasonResult] = []
-    
     
     var query = "people"
+    
+    var results: [JasonResult] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
