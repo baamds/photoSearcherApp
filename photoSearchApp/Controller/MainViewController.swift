@@ -4,7 +4,7 @@
 //
 //  Created by Amir Bakhshi on 2026-07-29.
 //
-// "https://api.unsplash.com/search/photos?page=1&per_page=10&query=people&client_id=mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
+
 
 import UIKit
 
@@ -16,7 +16,6 @@ class MainViewController: UIViewController {
     private let searchBar = UISearchBar()
     
     var query = "people"
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +71,17 @@ extension MainViewController {
 }
 // MARK: UIConfiguration ==========================================================
 extension MainViewController {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+        if let text = searchBar.text {
+            query = text
+            results.removeAll()
+            collectionView?.reloadData()
+            fetchPhotos(from: text)
+        }
+    }
+    
     private func configureView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -80,21 +90,23 @@ extension MainViewController {
         layout.itemSize = CGSize(width: view.frame.size.width - 20,
                                  height: view.frame.size.width/2)
         
-        let collectionVeiw = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionVeiw.register(UINib(nibName: PhotoCell.identifier,
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(UINib(nibName: PhotoCell.identifier,
                                       bundle: nil),
                                 forCellWithReuseIdentifier: PhotoCell.identifier)
-        collectionVeiw.dataSource = self
-        collectionVeiw.delegate = self
+        collectionView.dataSource = self
+        collectionView.delegate = self
         
-        view.addSubview(collectionVeiw)
+        view.addSubview(collectionView)
         view.addSubview(searchBar)
-        self.collectionView = collectionVeiw
+        searchBar.placeholder = "Search here ..."
+        self.collectionView = collectionView
     }
 }
 
 // MARK: UICollectionView Methods ====================================================
 extension MainViewController: UICollectionViewDataSource, UICollectionViewDelegate, UISearchBarDelegate {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return results.count
     }
@@ -109,7 +121,7 @@ extension MainViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(results[indexPath.row].color)
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

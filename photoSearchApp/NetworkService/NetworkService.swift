@@ -39,5 +39,4 @@ class NetworkService {
         }
         task.resume()
     }
-    
 }

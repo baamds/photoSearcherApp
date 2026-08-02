@@ -38,7 +38,6 @@ class ImageProvider {
                 self?.cache.setObject(image, forKey: url as NSString)
                 completion(image)
             }
-            
         }
         task.resume()
     }

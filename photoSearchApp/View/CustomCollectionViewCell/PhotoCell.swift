@@ -9,9 +9,7 @@ import UIKit
 
 class PhotoCell: UICollectionViewCell {
     
-    
     static let identifier = "PhotoCell"
-    
     
     @IBOutlet weak var imgView: UIImageView!
     @IBOutlet weak var profileImage: UIImageView!
@@ -21,8 +19,6 @@ class PhotoCell: UICollectionViewCell {
     @IBOutlet weak var containerView: UIView!
     
     override func awakeFromNib() {
-        
-        
         super.awakeFromNib()
         imgView.contentMode = .scaleAspectFill
         profileImage.layer.cornerRadius = profileImage.frame.size.width / 2
@@ -55,5 +51,4 @@ class PhotoCell: UICollectionViewCell {
             }
         })
     }
-
 }
