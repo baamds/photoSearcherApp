@@ -10,15 +10,12 @@ import UIKit
 
 class MainViewController: UIViewController, UICollectionViewDataSource {
     
-    
-    @IBOutlet weak var collectionView1: UICollectionView!
-    
    
     private var collectionView: UICollectionView?
+    var results: [JasonResult] = []
+    
     
     var query = "people"
-    
-    var results: [JasonResult] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
