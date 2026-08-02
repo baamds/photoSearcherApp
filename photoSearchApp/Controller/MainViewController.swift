@@ -4,23 +4,17 @@
 //
 //  Created by Amir Bakhshi on 2026-07-29.
 //
+// "https://api.unsplash.com/search/photos?page=1&per_page=10&query=people&client_id=mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
 
 import UIKit
 
-class MainViewController: UIViewController, UICollectionViewDataSource {
+class MainViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     
-    // "https://api.unsplash.com/search/photos?page=1&per_page=10&query=people&client_id=mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
-    
-    var page = 1
-    let keyword = "people"
-    let apiKey = "tYfYoUXHNfDpZQFA-DIifgLw_WLIDgimfCrpI8FUP5E"
-    let perPage = "30"
-   
-    private var collectionView: UICollectionView?
-    
-    var query = "people"
     
     var results: [JasonResult] = []
+    private var collectionView: UICollectionView?
+    var query = "people"
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,20 +47,23 @@ class MainViewController: UIViewController, UICollectionViewDataSource {
 }
 // MARK: UIConfiguration ==========================================================
 extension MainViewController {
-    func configureView() {
+    private func configureView() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
-        layout.itemSize = CGSize(width: view.frame.size.width/2, height: view.frame.size.width/2)
+        layout.minimumInteritemSpacing = 0
+        layout.itemSize = CGSize(width: view.frame.size.width - 20,
+                                 height: view.frame.size.width/2)
         
-        let collectionView = UICollectionView(frame:.zero, collectionViewLayout: layout)
-        collectionView.register(ImageCollectionViewCell.self, forCellWithReuseIdentifier: ImageCollectionViewCell.reuseIdentifier)
-        collectionView.dataSource = self
+        let collectionVeiw = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionVeiw.register(UINib(nibName: PhotoCell.identifier,
+                                      bundle: nil),
+                                forCellWithReuseIdentifier: PhotoCell.identifier)
+        collectionVeiw.dataSource = self
+        collectionVeiw.delegate = self
         
-        view.addSubview(collectionView)
-        self.collectionView = collectionView
-        collectionView.backgroundColor = .systemBackground
+        view.addSubview(collectionVeiw)
+        self.collectionView = collectionVeiw
     }
 }
 
@@ -77,15 +74,15 @@ extension MainViewController {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let imageURLString = results[indexPath.row].urls.regular
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.reuseIdentifier, for: indexPath) as? ImageCollectionViewCell else {
+        let photo = results[indexPath.row]
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCell.identifier, for: indexPath) as? PhotoCell else {
             return UICollectionViewCell()
         }
         
         // Configure the cell here if needed, e.g., pass imageURLString to it
         // cell.configure(with: imageURLString)
         
-        cell.setup(with: imageURLString)
+        cell.configure(with: photo)
         return cell
     }
 }

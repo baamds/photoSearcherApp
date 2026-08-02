@@ -14,7 +14,7 @@ class NetworkService {
     var page = 1
     
     func sendRequest(keyword: String, completion: @escaping(Result<[JasonResult]?, NetworkError>)-> Void) {
-        let apiKey = "tYfYoUXHNfDpZQFA-mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
+        let apiKey = "mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
         let perPage = "30"
         let url = "https://api.unsplash.com/search/photos?page=\(page)&per_page=\(perPage)&query=\(keyword)&client_id=\(apiKey)"
         
