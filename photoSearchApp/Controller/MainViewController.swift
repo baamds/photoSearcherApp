@@ -7,6 +7,7 @@
 
 
 import UIKit
+import Combine
 
 class MainViewController: UIViewController {
     
@@ -14,6 +15,7 @@ class MainViewController: UIViewController {
     var results: [JasonResult] = []
     private var collectionView: UICollectionView?
     private let searchBar = UISearchBar()
+    private var cancellables = Set<AnyCancellable>()
     
     var query = "people"
     
@@ -21,6 +23,7 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         searchBar.delegate = self
         configureView()
+        bindSearchBar()
         fetchPhotos(from: query)
     }
     
@@ -71,15 +74,37 @@ extension MainViewController {
 }
 // MARK: UIConfiguration ==========================================================
 extension MainViewController {
+
+    /// Turns typing in the search bar into a debounced Combine stream.
+    /// This avoids an API request for every character the user types.
+    private func bindSearchBar() {
+        NotificationCenter.default.publisher(
+            for: UITextField.textDidChangeNotification,
+            object: searchBar.searchTextField
+        )
+        .compactMap { ($0.object as? UITextField)?.text }
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .filter { !$0.isEmpty }
+        .debounce(for: .milliseconds(450), scheduler: RunLoop.main)
+        .removeDuplicates()
+        .sink { [weak self] keyword in
+            self?.search(for: keyword)
+        }
+        .store(in: &cancellables)
+    }
+
+    private func search(for keyword: String) {
+        guard keyword != query else { return }
+
+        query = keyword
+        NetworkService.shared.resetPagination()
+        results.removeAll()
+        collectionView?.reloadData()
+        fetchPhotos(from: keyword)
+    }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
-        if let text = searchBar.text {
-            query = text
-            results.removeAll()
-            collectionView?.reloadData()
-            fetchPhotos(from: text)
-        }
     }
     
     private func configureView() {

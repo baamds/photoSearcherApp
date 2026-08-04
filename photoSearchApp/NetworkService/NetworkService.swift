@@ -12,9 +12,13 @@ class NetworkService {
     
     static let shared = NetworkService()
     var page = 1
+
+    func resetPagination() {
+        page = 1
+    }
     
     func sendRequest(keyword: String, completion: @escaping(Result<[JasonResult]?, NetworkError>)-> Void) {
-        let apiKey = "mqKcgxYy5V4Ql6Kvomv1vRl-3ddemoqBaG890i1-OOY"
+        let apiKey = "RlyVw9SVOKmK9GNS9i5Db8Pxa47-ZfZBDYTP5dERbgo"
         let perPage = "30"
         let url = "https://api.unsplash.com/search/photos?page=\(page)&per_page=\(perPage)&query=\(keyword)&client_id=\(apiKey)"
         
