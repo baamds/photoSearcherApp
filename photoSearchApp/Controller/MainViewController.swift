@@ -42,39 +42,39 @@ class MainViewController: UIViewController {
 
 // MARK: - Networking ======================================================
 extension MainViewController {
-       private func fetchPhotos(from keyword: String) {
-           NetworkService.shared.sendRequest(keyword: keyword) { [weak self] result in
-               switch result {
-               case .success(let results):
-                   guard let results = results else { return }
-                   DispatchQueue.main.async {
-                       self?.results = results
-                       self?.collectionView?.reloadData()
-                   }
-               case .failure(let error):
-                   print(error)
-               }
-           }
-       }
-       
-       private func fetchNextBatch(from keyword: String) {
-           NetworkService.shared.sendRequest(keyword: keyword, completion: { [weak self] result in
-               switch result {
-               case .success(let results):
-                   guard let results = results else { return }
-                   DispatchQueue.main.async {
-                       self?.results.append(contentsOf: results)
-                       self?.collectionView?.reloadData()
-                   }
-               case .failure(let error):
-                   print(error)
-               }
-           })
-       }
+    private func fetchPhotos(from keyword: String) {
+        NetworkService.shared.sendRequest(keyword: keyword) { [weak self] result in
+            switch result {
+            case .success(let results):
+                guard let results = results else { return }
+                DispatchQueue.main.async {
+                    self?.results = results
+                    self?.collectionView?.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    private func fetchNextBatch(from keyword: String) {
+        NetworkService.shared.sendRequest(keyword: keyword, completion: { [weak self] result in
+            switch result {
+            case .success(let results):
+                guard let results = results else { return }
+                DispatchQueue.main.async {
+                    self?.results.append(contentsOf: results)
+                    self?.collectionView?.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
+        })
+    }
 }
 // MARK: UIConfiguration ==========================================================
 extension MainViewController {
-
+    
     /// Turns typing in the search bar into a debounced Combine stream.
     /// This avoids an API request for every character the user types.
     private func bindSearchBar() {
@@ -92,10 +92,10 @@ extension MainViewController {
         }
         .store(in: &cancellables)
     }
-
+    
     private func search(for keyword: String) {
         guard keyword != query else { return }
-
+        
         query = keyword
         NetworkService.shared.resetPagination()
         results.removeAll()
@@ -124,7 +124,7 @@ extension MainViewController {
         
         view.addSubview(collectionView)
         view.addSubview(searchBar)
-        searchBar.placeholder = "Search here ..."
+        searchBar.placeholder = "Type here ..."
         self.collectionView = collectionView
     }
 }

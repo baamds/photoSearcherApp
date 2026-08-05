@@ -12,7 +12,7 @@ class NetworkService {
     
     static let shared = NetworkService()
     var page = 1
-
+    
     func resetPagination() {
         page = 1
     }

@@ -27,7 +27,7 @@ class ImageProvider {
                 completion(nil)
                 return
             }
-                
+            
             DispatchQueue.main.async {
                 guard let image = UIImage(data: data) else {
                     completion(nil)
