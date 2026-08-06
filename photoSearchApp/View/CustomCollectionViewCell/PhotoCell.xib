@@ -63,7 +63,7 @@
                                         <rect key="frame" x="116.66666666666666" y="0.0" width="116.66666666666666" height="45"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="tEC-lb-C7J">
-                                                <rect key="frame" x="5" y="12.666666666666657" width="111.66666666666667" height="20"/>
+                                                <rect key="frame" x="32.333333333333329" y="12.666666666666657" width="52.333333333333329" height="20"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="heart.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="p8B-1U-qsq">
                                                         <rect key="frame" x="0.0" y="1.9999999999999982" width="20" height="17"/>
@@ -74,7 +74,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0000" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G7J-qD-og0">
-                                                        <rect key="frame" x="21.999999999999979" y="0.0" width="89.666666666666686" height="20"/>
+                                                        <rect key="frame" x="22" y="0.0" width="30.333333333333329" height="20"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="20" id="DGV-Cd-vN3"/>
                                                         </constraints>
@@ -87,9 +87,8 @@
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
+                                            <constraint firstItem="tEC-lb-C7J" firstAttribute="centerX" secondItem="7dk-Au-fV8" secondAttribute="centerX" id="CiF-qB-ul6"/>
                                             <constraint firstItem="tEC-lb-C7J" firstAttribute="centerY" secondItem="7dk-Au-fV8" secondAttribute="centerY" id="QDZ-GP-exT"/>
-                                            <constraint firstItem="tEC-lb-C7J" firstAttribute="leading" secondItem="7dk-Au-fV8" secondAttribute="leading" constant="5" id="RQc-zd-PbD"/>
-                                            <constraint firstAttribute="trailing" secondItem="tEC-lb-C7J" secondAttribute="trailing" id="qpa-ij-RHC"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UsJ-2y-GJD" userLabel="RightView">

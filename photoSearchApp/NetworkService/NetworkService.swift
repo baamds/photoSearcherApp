@@ -7,40 +7,51 @@
 
 import Foundation
 
+protocol PhotoSearching {
+    func searchPhotos(keyword: String, page: Int, completion: @escaping (Result<[JasonResult], NetworkError>) -> Void)
+}
 
-class NetworkService {
-    
+final class NetworkService: PhotoSearching {
+
     static let shared = NetworkService()
-    var page = 1
-    
-    func resetPagination() {
-        page = 1
+
+    private enum Constants {
+        static let accessKey = ""
+        static let resultsPerPage = 30
     }
-    
-    func sendRequest(keyword: String, completion: @escaping(Result<[JasonResult]?, NetworkError>)-> Void) {
-        let apiKey = "RlyVw9SVOKmK9GNS9i5Db8Pxa47-ZfZBDYTP5dERbgo"
-        let perPage = "30"
-        let url = "https://api.unsplash.com/search/photos?page=\(page)&per_page=\(perPage)&query=\(keyword)&client_id=\(apiKey)"
-        
-        guard let urlString = URL(string: url) else { return }
-        
-        let task = URLSession.shared.dataTask(with: urlString) { [weak self] (data, _, error) in
-            
-            guard let data = data, error == nil else {
-                completion(.failure(NetworkError.networkError(string: "Error making api call. \(error.debugDescription)")))
+
+    func searchPhotos(keyword: String, page: Int, completion: @escaping (Result<[JasonResult], NetworkError>) -> Void) {
+        var components = URLComponents(string: "https://api.unsplash.com/search/photos")
+        components?.queryItems = [
+            URLQueryItem(name: "page", value: String(page)),
+            URLQueryItem(name: "per_page", value: String(Constants.resultsPerPage)),
+            URLQueryItem(name: "query", value: keyword),
+            URLQueryItem(name: "client_id", value: Constants.accessKey)
+        ]
+
+        guard let url = components?.url else {
+            completion(.failure(.invalidURL))
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data, error == nil else {
+                completion(.failure(.networkError(string: error?.localizedDescription ?? "No response data.")))
                 return
             }
-            
-            do {
-                let decoder = JSONDecoder()
-                let result = try decoder.decode(APIResponse.self, from: data)
-                self?.page += 1
-                completion(.success(result.results))
-                
-            } catch {
-                completion(.failure(NetworkError.jsonParsing(string: "Error decoding JASON response.\(error)")))
+
+            guard let httpResponse = response as? HTTPURLResponse,
+                  200..<300 ~= httpResponse.statusCode else {
+                completion(.failure(.networkError(string: "The server returned an invalid response.")))
+                return
             }
-        }
-        task.resume()
+
+            do {
+                let jsonResult = try JSONDecoder().decode(APIResponse.self, from: data).results
+                completion(.success(jsonResult))
+            } catch {
+                completion(.failure(.jsonParsing(string: error.localizedDescription)))
+            }
+        }.resume()
     }
 }
