@@ -25,6 +25,7 @@ final class MainViewController: UIViewController {
         configureCollectionView()
         configureSearch()
         bindViewModel()
+        // first batch of data loads here
         viewModel.loadInitialResults()
     }
 }
@@ -42,6 +43,7 @@ private extension MainViewController {
     func bindViewModel() {
         viewModel.onResultsChanged = { [weak self] in
             self?.contentView.collectionView.reloadData()
+            // print("view model onresultschanged got called!")
         }
 
         viewModel.onError = { error in

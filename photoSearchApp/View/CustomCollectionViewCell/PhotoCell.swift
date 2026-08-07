@@ -9,6 +9,8 @@ import UIKit
 
 class PhotoCell: UICollectionViewCell {
     
+    // In this context, static means the property belongs to the type itself (PhotoCell),
+    // not to individual instances of the type.
     static let identifier = "PhotoCell"
     
     @IBOutlet weak var imgView: UIImageView!
@@ -23,7 +25,7 @@ class PhotoCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         imgView.contentMode = .scaleAspectFill
-        containerView.backgroundColor = .secondarySystemBackground
+        containerView.backgroundColor = .systemBackground
     }
 
     override func layoutSubviews() {
@@ -32,6 +34,7 @@ class PhotoCell: UICollectionViewCell {
         profileImage.clipsToBounds = true
     }
     
+    // reset all view components before using for new image
     override func prepareForReuse() {
         super.prepareForReuse()
         representedPhotoID = nil
@@ -44,19 +47,21 @@ class PhotoCell: UICollectionViewCell {
     
     func configure(with photo: JasonResult) {
         representedPhotoID = photo.id
-        let imageUrl = photo.urls.small
+        let representedImageUrl = photo.urls.small
         let profileImage = photo.user.profile_image.small
         let name = photo.user.name
         let likes = photo.likes
         let location = photo.user.location
         
-        ImageProvider.shared.fetchImage(url: imageUrl, completion: { [weak self] image in
+        // fetch represented image
+        ImageProvider.shared.fetchImage(url: representedImageUrl, completion: { [weak self] image in
             DispatchQueue.main.async {
                 guard self?.representedPhotoID == photo.id else { return }
                 self?.imgView.image = image
             }
         })
-
+        
+        // fetch profile image
         ImageProvider.shared.fetchImage(url: profileImage, completion: { [weak self] image in
             DispatchQueue.main.async {
                 guard self?.representedPhotoID == photo.id else { return }

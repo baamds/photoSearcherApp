@@ -19,7 +19,9 @@ final class NetworkService: PhotoSearching {
         static let accessKey = ""
         static let resultsPerPage = 30
     }
-
+    
+    // what the @escaping means:  The closure may be called after searchPhotos returns (i.e., it “escapes” the function’s lifetime).
+    // This is required because the network request is asynchronous and completes later.
     func searchPhotos(keyword: String, page: Int, completion: @escaping (Result<[JasonResult], NetworkError>) -> Void) {
         var components = URLComponents(string: "https://api.unsplash.com/search/photos")
         components?.queryItems = [
@@ -30,7 +32,7 @@ final class NetworkService: PhotoSearching {
         ]
 
         guard let url = components?.url else {
-            completion(.failure(.invalidURL))
+            completion(.failure(.invalidURL(string: "Couldn't create a valid URL from the provided components.")))
             return
         }
 
@@ -40,11 +42,11 @@ final class NetworkService: PhotoSearching {
                 return
             }
 
-            guard let httpResponse = response as? HTTPURLResponse,
-                  200..<300 ~= httpResponse.statusCode else {
-                completion(.failure(.networkError(string: "The server returned an invalid response.")))
-                return
-            }
+//            guard let httpResponse = response as? HTTPURLResponse,
+//                  200..<300 ~= httpResponse.statusCode else {
+//                completion(.failure(.networkError(string: "The server returned an invalid response.")))
+//                return
+//            }
 
             do {
                 let jsonResult = try JSONDecoder().decode(APIResponse.self, from: data).results

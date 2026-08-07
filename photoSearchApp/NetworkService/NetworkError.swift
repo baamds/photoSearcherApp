@@ -8,7 +8,7 @@
 import Foundation
 
 enum NetworkError: Error {
-    case invalidURL
+    case invalidURL(string: String)
     case networkError(string: String)
     case jsonParsing(string: String)
     case unknown(string : String)

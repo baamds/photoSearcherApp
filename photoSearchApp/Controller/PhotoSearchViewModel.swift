@@ -8,12 +8,15 @@ import Foundation
 
 final class PhotoSearchViewModel {
 
+    // Using static let is the common Swift pattern for
+    // grouping constants in a namespace-like type.
     private enum Constants {
-        static let initialQuery = "people"
-        static let paginationThreshold = 12
+        static let initialQuery: String = "people"
+        static let paginationThreshold: Int = 12
     }
 
     private let service: PhotoSearching
+    
     private let searchInput = PassthroughSubject<String, Never>()
     private var cancellables = Set<AnyCancellable>()
     private var query = Constants.initialQuery
@@ -23,9 +26,15 @@ final class PhotoSearchViewModel {
     private var requestIdentifier = UUID()
 
     private(set) var results: [JasonResult] = []
+    
+    // optional callback closures
+    // creating a wire to viewcontroller
+    // when bind, viewcontroller listens to changes,
+    // when new data is available (eg after a search completes), it will invoke onResultsChanged?()
     var onResultsChanged: (() -> Void)?
     var onError: ((NetworkError) -> Void)?
 
+    // custom initializer for PhotoSearchViewModel
     init(service: PhotoSearching = NetworkService.shared) {
         self.service = service
         bindSearchInput()
@@ -59,15 +68,26 @@ private extension PhotoSearchViewModel {
             }
             .store(in: &cancellables)
     }
-
+    
+    // fetching first batch of photos starts here
+    // this function gets called in 2 situations
+    // resetResults True or False
+    
     func loadPage(resetResults: Bool) {
         guard resetResults || (!isLoading && canLoadMore) else { return }
-
+        
+        
+        // if its the first time loadPage() gets called
+        // this block is the reset state for a new search.
         if resetResults {
             requestIdentifier = UUID()
+            // Resets pagination back to the first page. Since you’re starting
+            // a new search, you want to fetch from page 1 again.
             nextPage = 1
+            // Re-enables pagination.
             canLoadMore = true
             results.removeAll()
+            //  The () invokes the closure, which takes no parameters and returns Void. (reloading the uicollectionview)
             onResultsChanged?()
         }
 
@@ -77,10 +97,11 @@ private extension PhotoSearchViewModel {
         let identifier = requestIdentifier
 
         service.searchPhotos(keyword: requestedQuery, page: requestedPage) { [weak self] result in
+            // All UI updates must happen on the main thread.
             DispatchQueue.main.async {
                 guard let self, identifier == self.requestIdentifier else { return }
                 self.isLoading = false
-
+                
                 switch result {
                 case .success(let photos):
                     self.results.append(contentsOf: photos)
