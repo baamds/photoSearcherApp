@@ -8,7 +8,8 @@
 import Foundation
 
 protocol PhotoSearching {
-    func searchPhotos(keyword: String, page: Int, completion: @escaping (Result<[JasonResult], NetworkError>) -> Void)
+    // func searchPhotos(keyword: String, page: Int, completion: @escaping (Result<[JasonResult], NetworkError>) -> Void)
+    func searchPhotos(keyword:String, page: Int) async throws -> [JasonResult]
 }
 
 final class NetworkService: PhotoSearching {
@@ -22,7 +23,7 @@ final class NetworkService: PhotoSearching {
     
     // what the @escaping means:  The closure may be called after searchPhotos returns (i.e., it “escapes” the function’s lifetime).
     // This is required because the network request is asynchronous and completes later.
-    func searchPhotos(keyword: String, page: Int, completion: @escaping (Result<[JasonResult], NetworkError>) -> Void) {
+    func searchPhotos(keyword: String, page: Int) async throws -> [JasonResult] {
         var components = URLComponents(string: "https://api.unsplash.com/search/photos")
         components?.queryItems = [
             URLQueryItem(name: "page", value: String(page)),
@@ -32,28 +33,11 @@ final class NetworkService: PhotoSearching {
         ]
 
         guard let url = components?.url else {
-            completion(.failure(.invalidURL(string: "Couldn't create a valid URL from the provided components.")))
-            return
-        }
-
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data, error == nil else {
-                completion(.failure(.networkError(string: error?.localizedDescription ?? "No response data.")))
-                return
-            }
-
-//            guard let httpResponse = response as? HTTPURLResponse,
-//                  200..<300 ~= httpResponse.statusCode else {
-//                completion(.failure(.networkError(string: "The server returned an invalid response.")))
-//                return
-//            }
-
-            do {
-                let jsonResult = try JSONDecoder().decode(APIResponse.self, from: data).results
-                completion(.success(jsonResult))
-            } catch {
-                completion(.failure(.jsonParsing(string: error.localizedDescription)))
-            }
-        }.resume()
+            throw NetworkError.invalidURL(string: "Couldn't create a valid URL.")        }
+        
+        // Built-in async URLSession API — no dataTask closure
+               let (data, _) = try await URLSession.shared.data(from: url)
+               let response = try JSONDecoder().decode(APIResponse.self, from: data)
+               return response.results
     }
 }
